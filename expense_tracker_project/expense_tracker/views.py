@@ -16,6 +16,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class ExpenseViewSet(ModelViewSet):
     serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
