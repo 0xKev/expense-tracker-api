@@ -41,7 +41,6 @@ class ExpenseViewSet(ModelViewSet):
             case "last_3_months":
                 queryset = queryset.filter(purchase_date__gte=(current_time - timedelta(days=30)))
 
-
             case "custom":
                 if start_date and not end_date:
                     queryset = queryset.filter(purchase_date__range=[start_date, current_time])
@@ -53,3 +52,18 @@ class ExpenseViewSet(ModelViewSet):
 
 
 
+class SignUpView(CreateAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = CustomUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "user": serializer.data,
+                "refresh": str(refresh),
+                "access": str(refresh.access_token)
+            }, *args, **kwargs)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
