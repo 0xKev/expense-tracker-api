@@ -7,13 +7,39 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Expense
-from accounts.models import CustomUser
 from .serializers import *
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework_simplejwt.tokens import RefreshToken 
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiExample
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="filter",
+                description="Filter expenses by time range",
+                required=False,
+                type=str,
+                enum=["past_week", "last_month", "last_3_months", "custom"]
+            ),
+            OpenApiParameter(
+                name="start_date",
+                description="Start date for custom filter (YYYY-MM-DD)",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                name="end_date",
+                description="End date for custom filter (YYYY-MM-DD)",
+                required=False,
+                type=str,
+            ),
+        ]
+    )
+)
 class ExpenseViewSet(ModelViewSet):
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
