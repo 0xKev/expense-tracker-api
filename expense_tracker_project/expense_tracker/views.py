@@ -39,7 +39,7 @@ class ExpenseViewSet(ModelViewSet):
                 queryset = queryset.filter(purchase_date__gte=(current_time - timedelta(days=30)))
 
             case "last_3_months":
-                queryset = queryset.filter(purchase_date__gte=(current_time - timedelta(days=30)))
+                queryset = queryset.filter(purchase_date__gte=(current_time - timedelta(days=90)))
 
             case "custom":
                 if start_date and not end_date:
